@@ -30,7 +30,10 @@
 
 	let passwordError = '';
 
-	const validatePassword = (pass) => {
+	const validatePassword = (pass, mode) => {
+		if (mode === 'signin') {
+			return '';
+		}
 		if (pass.length < 8) {
 			return $i18n.t('Password must be at least 8 characters');
 		}
@@ -101,7 +104,7 @@
 	};
 
 	const submitHandler = async () => {
-		const passError = validatePassword(password);
+		const passError = validatePassword(password, mode);
 		if (passError) {
 			passwordError = passError;
 			return;
@@ -296,7 +299,7 @@
 											name="current-password"
 											required
 											on:input={(e) => {
-												passwordError = validatePassword(e.target.value);
+												passwordError = validatePassword(e.target.value, mode);
 											}}
 										/>
 										{#if passwordError}
