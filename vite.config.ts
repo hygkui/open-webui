@@ -39,5 +39,13 @@ export default defineConfig({
 	},
 	worker: {
 		format: 'es'
-	}
+	},
+	server: {
+		host: '0.0.0.0', // 允许所有 IP 地址访问
+		port: 5173,      // 端口号
+		open: true,      // 自动在浏览器中打开
+		allowedHosts: [
+		  '5173-hygkui-openwebui-97glbtxnp00.ws-us118.gitpod.io' // 添加您的主机名
+		]
+	  }
 });
