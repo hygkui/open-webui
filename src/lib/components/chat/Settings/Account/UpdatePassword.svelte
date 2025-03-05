@@ -10,7 +10,36 @@
 	let newPassword = '';
 	let newPasswordConfirm = '';
 
+	let passwordError = '';
+	let passwordError2 = '';
+
+	const validatePassword = (pass) => {
+		if (pass.length < 8) {
+			return $i18n.t('Password must be at least 8 characters');
+		}
+		if (!/[A-Z]/.test(pass)) {
+			return $i18n.t('Password must contain at least one uppercase letter');
+		}
+		if (!/[a-z]/.test(pass)) {
+			return $i18n.t('Password must contain at least one lowercase letter');
+		}
+		if (!/[0-9]/.test(pass)) {
+			return $i18n.t('Password must contain at least one number');
+		}
+		if (!/[!@#$%^&*(),.?":{}|<>]/.test(pass)) {
+			return $i18n.t('Password must contain at least one special character');
+		}
+		return '';
+	};
+
 	const updatePasswordHandler = async () => {
+    if(!currentPassword || !newPassword || !newPasswordConfirm){
+        return
+    }
+    if (validatePassword(newPassword)) {
+		    passwordError = validatePassword(newPassword);
+        return;
+    }
 		if (newPassword === newPasswordConfirm) {
 			const res = await updateUserPassword(localStorage.token, currentPassword, newPassword).catch(
 				(error) => {
@@ -81,7 +110,13 @@
 						placeholder={$i18n.t('Enter your new password')}
 						autocomplete="new-password"
 						required
-					/>
+            on:input={(e) => {
+              passwordError = validatePassword(e.target.value);
+            }}
+          />
+          {#if passwordError}
+            <div class="text-red-500 text-xs mt-1">{passwordError}</div>
+          {/if}
 				</div>
 			</div>
 
@@ -96,7 +131,13 @@
 						placeholder={$i18n.t('Confirm your new password')}
 						autocomplete="off"
 						required
+            on:input={(e) => {
+              passwordError2 = validatePassword(e.target.value);
+            }}
 					/>
+          {#if passwordError2}
+            <div class="text-red-500 text-xs mt-1">{passwordError2}</div>
+          {/if}
 				</div>
 			</div>
 		</div>
