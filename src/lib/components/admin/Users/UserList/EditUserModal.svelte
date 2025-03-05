@@ -24,7 +24,37 @@
 		password: ''
 	};
 
+	let passwordError = '';
+
+	const validatePassword = (pass) => {
+		// Skip validation if password is empty (not being changed)
+		if (!pass) return '';
+		
+		if (pass.length < 8) {
+			return $i18n.t('Password must be at least 8 characters');
+		}
+		if (!/[A-Z]/.test(pass)) {
+			return $i18n.t('Password must contain at least one uppercase letter');
+		}
+		if (!/[a-z]/.test(pass)) {
+			return $i18n.t('Password must contain at least one lowercase letter');
+		}
+		if (!/[0-9]/.test(pass)) {
+			return $i18n.t('Password must contain at least one number');
+		}
+		if (!/[!@#$%^&*(),.?":{}|<>]/.test(pass)) {
+			return $i18n.t('Password must contain at least one special character');
+		}
+		return '';
+	};
+
 	const submitHandler = async () => {
+		// Validate password if it's being changed
+		if (_user.password && !validatePassword(_user.password)) {
+			passwordError = validatePassword(_user.password);
+			return;
+		}
+
 		const res = await updateUserById(localStorage.token, selectedUser.id, _user).catch((error) => {
 			toast.error(`${error}`);
 		});
@@ -131,11 +161,15 @@
 
 							<div class="flex-1">
 								<input
-									class="w-full rounded-sm py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-800 outline-hidden"
-									type="password"
-									bind:value={_user.password}
-									autocomplete="new-password"
-								/>
+                    class="w-full rounded-sm py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-800 outline-hidden {passwordError ? 'border border-red-500' : ''}"
+                    type="password"
+                    bind:value={_user.password}
+                    on:input={() => passwordError = _user.password ? validatePassword(_user.password) : ''}
+                    autocomplete="new-password"
+                />
+                {#if passwordError}
+                    <div class="text-red-500 text-xs mt-1">{passwordError}</div>
+                {/if}
 							</div>
 						</div>
 					</div>
