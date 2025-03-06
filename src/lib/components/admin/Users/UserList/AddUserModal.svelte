@@ -59,7 +59,7 @@
 
 	const submitHandler = async () => {
 		// Validate password if it's being changed
-		if (_user.password && !validatePassword(_user.password)) {
+		if (_user.password && validatePassword(_user.password)) {
 			passwordError = validatePassword(_user.password);
 			return;
 		}
